@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Модель пользователя Telegram
+model TelegramUser {
+  id            BigInt    @id // Telegram ID пользователя
+  username      String?   // Username в Telegram
+  wallets       Wallet[]  // Связь с кошельками пользователя
+  tokenTrades   TokenTrade[] // История торгов токенами
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Модель кошелька
+model Wallet {
+  id            Int          @id @default(autoincrement())
+  address       String       @unique // Публичный адрес кошелька
+  privateKey    String?      // Приватный ключ (опциональный)
+  user          TelegramUser @relation(fields: [userId], references: [id])
+  userId        BigInt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([userId])
+}
+
+// Модель для отслеживания торгуемых токенов
+model TokenTrade {
+  id            Int          @id @default(autoincrement())
+  contractAddress String     // Адрес контракта токена
+  symbol        String       // Символ токена (например, PEPE, WOJAK)
+  isTracking    Boolean      @default(true) // Отслеживает ли пользователь этот токен
+  user          TelegramUser @relation(fields: [userId], references: [id])
+  userId        BigInt
+  createdAt     DateTime     @default(now())
+
+  @@index([userId])
+  @@index([contractAddress])
+} 

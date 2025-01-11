@@ -1,0 +1,20 @@
+{
+  "name": "prisma-sqlite-project",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "bun index.ts"
+  },
+  "dependencies": {
+    "@grammyjs/conversations": "^1.2.0",
+    "@prisma/client": "^6.2.1",
+    "@solana/spl-token": "^0.3.9",
+    "@solana/web3.js": "^1.87.6",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.1",
+    "grammy": "^1.21.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.2.1"
+  }
+}

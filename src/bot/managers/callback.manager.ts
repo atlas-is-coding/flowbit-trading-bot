@@ -10,6 +10,7 @@ export class CallbackManager {
   }
 
   async handleImportWallet(ctx: BotContext) {
+    await ctx.editMessageText("Enter you private key:");
     await ctx.conversation.enter('importWalletState');
   }
 
@@ -29,7 +30,6 @@ export class CallbackManager {
     await this.userRepository.createUser(ctx.from!.id, ctx.from?.username);
     await this.userRepository.addWallet(ctx.from!.id, publicKey, privateKey);
 
-
-    await ctx.reply(msg);
+    await ctx.editMessageText(msg);
   }
 }

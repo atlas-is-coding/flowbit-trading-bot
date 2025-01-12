@@ -1,7 +1,11 @@
 import type { Conversation, ConversationFlavor } from "@grammyjs/conversations";
-import { Context } from "grammy";
+import { Context, session, type SessionFlavor } from "grammy";
 
-type BotContext = Context & ConversationFlavor;
+interface SessionData {
+    messageToEdit: number;
+};
+
+type BotContext = Context & ConversationFlavor & SessionFlavor<SessionData>;
 type MyConversation = Conversation<BotContext>;
 
 export type { BotContext, MyConversation };

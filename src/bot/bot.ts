@@ -1,20 +1,25 @@
 import { Bot, session } from "grammy";
+import { conversations, createConversation } from "@grammyjs/conversations";
+
 import dotenv from "dotenv";
 import { UserRepository } from "./repository/repository";
 import { PrismaClient } from "@prisma/client";
+
 import type { BotContext } from "./global";
+
 import { CallbackManager } from "./managers/callback.manager";
-import { walletCreateOptionKeyboard } from "./keyboards/inline.keyboard";
-import { conversations, createConversation } from "@grammyjs/conversations";
 import { StateManager } from "./managers/state.manager";
+import { CommandManager } from "./managers/command.manager";
 
 dotenv.config();
 
 class TGBot {
   private bot: Bot<BotContext>;
   private userRepository: UserRepository;
+  
   private callbackManager: CallbackManager;
   private stateManager: StateManager;
+  private commandManager: CommandManager;
 
   constructor() {
     if (!process.env.BOT_TOKEN) {
@@ -23,6 +28,7 @@ class TGBot {
 
     this.userRepository = new UserRepository(new PrismaClient());
     
+    this.commandManager = new CommandManager(this.userRepository);
     this.callbackManager = new CallbackManager(this.userRepository);
     this.stateManager = new StateManager(this.userRepository);
     
@@ -35,13 +41,13 @@ class TGBot {
   }
 
   private setupMiddlewares(): void {
-    this.bot.use(session({ initial: () => ({}) }));
+    this.bot.use(session({ initial: () => ({ messageToEdit: -1 }) }));
     this.bot.use(conversations());
     this.bot.use(createConversation(this.stateManager.importWalletState, "importWalletState"));
   }
 
   private setupCommands(): void {
-    this.bot.command("start", this.handleStart.bind(this));
+    this.bot.command("start", this.commandManager.handleStart.bind(this));
   }
 
   private setupCallbacks(): void {
@@ -51,26 +57,6 @@ class TGBot {
 
   private setupMessageHandlers(): void {
     // this.bot.on("message:text", this.handleTextMessage.bind(this));
-  }
-
-  private async handleStart(ctx: BotContext): Promise<void> {
-    const userId = ctx.from?.id;
-    
-    if (!userId) {
-      await ctx.reply("Произошла ошибка при получении данных пользователя");
-      return;
-    }
-
-    if (await this.userRepository.userExists(userId)) {
-      await ctx.reply("Ваш профиль");
-    } else {
-        const welcomeMessage = "🌸 Welcome to Galiaf!" +
-        "Your trading journey will be successful with us!\n" +
-        "🔑 First of all, you need to create or import wallet";
-        await ctx.reply(welcomeMessage, {
-            reply_markup: walletCreateOptionKeyboard
-        });
-    }
   }
 
   public async start(): Promise<void> {

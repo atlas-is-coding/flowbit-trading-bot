@@ -41,7 +41,7 @@ class TGBot {
   }
 
   private setupMiddlewares(): void {
-    this.bot.use(session({ initial: () => ({ messageToEdit: -1 }) }));
+    this.bot.use(session({ initial: () => ({ messageToEdit: -1, locale: "en" }) }));
     this.bot.use(conversations());
     this.bot.use(createConversation(this.stateManager.importWalletState, "importWalletState"));
   }

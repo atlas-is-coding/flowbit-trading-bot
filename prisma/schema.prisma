@@ -11,6 +11,7 @@ datasource db {
 model TelegramUser {
   id            BigInt    @id // Telegram ID пользователя
   username      String?   // Username в Telegram
+  locale        String    @default("en") // Локализация пользователя
   wallets       Wallet[]  // Связь с кошельками пользователя
   tokenTrades   TokenTrade[] // История торгов токенами
   createdAt     DateTime  @default(now())

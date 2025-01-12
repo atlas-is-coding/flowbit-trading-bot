@@ -6,7 +6,7 @@ export class UserRepository {
   constructor(private prisma: PrismaClient) {}
 
   // Создание нового пользователя
-  async createUser(id: number, username?: string): Promise<UserModel> {
+  async createUser(id: number, username?: string, locale: string = 'en'): Promise<UserModel> {
     // Сначала проверяем, существует ли пользователь
     const existingUser = await this.prisma.telegramUser.findUnique({
       where: { id: BigInt(id) },
@@ -23,6 +23,7 @@ export class UserRepository {
       data: {
         id: BigInt(id),
         username,
+        locale,
       },
       include: {
         wallets: true,
@@ -153,5 +154,26 @@ export class UserRepository {
         address: walletAddress,
       },
     });
+  }
+
+  // Обновление локализации пользователя
+  async updateUserLocale(userId: number, locale: string): Promise<UserModel> {
+    const user = await this.prisma.telegramUser.update({
+      where: { id: BigInt(userId) },
+      data: { locale },
+      include: {
+        wallets: true,
+      },
+    });
+    return new UserModel(user);
+  }
+
+  // Получение локализации пользователя
+  async getUserLocale(userId: number): Promise<string> {
+    const user = await this.prisma.telegramUser.findUnique({
+      where: { id: BigInt(userId) },
+      select: { locale: true },
+    });
+    return user?.locale || 'en'; // Возвращаем 'en' если пользователь не найден
   }
 }

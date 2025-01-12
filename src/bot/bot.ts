@@ -53,7 +53,16 @@ class TGBot {
   private setupCallbacks(): void {
     this.bot.callbackQuery("import_wallet", this.callbackManager.handleImportWallet.bind(this));
     this.bot.callbackQuery("create_wallet", this.callbackManager.handleCreateWallet.bind(this));
+   
     this.bot.callbackQuery("start_trading", this.callbackManager.handleStartTrading.bind(this));
+    this.bot.callbackQuery("settings", this.callbackManager.handleSettings.bind(this));
+    this.bot.callbackQuery("refresh_trading_menu", this.callbackManager.handleRefreshTradingMenu.bind(this));
+    this.bot.callbackQuery("close_trading_menu", this.callbackManager.handleCloseTradingMenu.bind(this));
+
+    this.bot.callbackQuery("back_to_trading_menu", this.callbackManager.handleBackToTradingMenu.bind(this));
+    this.bot.callbackQuery("language_settings", this.callbackManager.handleLanguageSettings.bind(this));
+    this.bot.callbackQuery("close_settings", this.callbackManager.handleCloseSettings.bind(this));
+    this.bot.callbackQuery("back_to_settings", this.callbackManager.handleBackToSettings.bind(this));
   }
 
   private setupMessageHandlers(): void {

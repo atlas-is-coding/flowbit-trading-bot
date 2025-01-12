@@ -10,6 +10,7 @@ import type { BotContext } from "./global";
 import { CallbackManager } from "./managers/callback.manager";
 import { StateManager } from "./managers/state.manager";
 import { CommandManager } from "./managers/command.manager";
+import { I18n } from "@grammyjs/i18n";
 
 dotenv.config();
 
@@ -44,6 +45,10 @@ class TGBot {
     this.bot.use(session({ initial: () => ({ messageToEdit: -1, locale: "en" }) }));
     this.bot.use(conversations());
     this.bot.use(createConversation(this.stateManager.importWalletState, "importWalletState"));
+    this.bot.use(new I18n<BotContext>({
+      defaultLocale: "en",
+      directory: "locales",
+    }));
   }
 
   private setupCommands(): void {

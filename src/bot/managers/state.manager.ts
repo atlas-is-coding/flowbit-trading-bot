@@ -1,7 +1,7 @@
 import type { BotContext, MyConversation } from "../global";
 import { startTradingKeyboard } from "../keyboards/inline.keyboard";
 import { UserRepository } from "../repository/repository";
-import { createWalletFromPK, generateWallet } from "../utils/wallet.util";
+import { createWalletFromPK } from "../utils/wallet.util";
 
 export class StateManager {
   private userRepository: UserRepository;
@@ -16,7 +16,7 @@ export class StateManager {
     
     const privateKeyRegex = /^[1-9A-HJ-NP-Za-km-z]{88}$/;
     if (!privateKeyRegex.test(userResponse.message!.text!)) {
-        await ctx.reply("❌ Invalid private key format. Please enter a valid Solana private key.");
+        await ctx.reply(ctx.t("invalidPrivateKey"));
         return;
     }
 
@@ -24,22 +24,11 @@ export class StateManager {
 
     await userResponse.deleteMessage();
 
-    const msg = "🟢 Your Wallet Has Been Successfully Imported 🟢\n" +
-        "\n" +
-        "🔑 Save your Private Key:\n" +
-        "Here is your private key. Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again.\n" +
-        "\n" +
-        "Private Key:\n" +
-        "\n" +
-        `${privateKey}\n` +
-        "\n" +
-        "🟣 Your Solana Wallet Addresses:\n" +
-        `${publicKey}\n`;
-
     await this.userRepository.createUser(ctx.from!.id, ctx.from?.username);
     await this.userRepository.addWallet(ctx.from!.id, publicKey, privateKey);
-    await ctx.editMessageText(msg, {
-      reply_markup: startTradingKeyboard
+    
+    await ctx.editMessageText(ctx.t("walletImported", { privateKey, publicKey }), {
+      reply_markup: startTradingKeyboard(ctx)
     });
 
     return;

@@ -1,9 +1,11 @@
+import type { BotContext } from "../global";
 import { UserRepository } from "../repository/repository";
 import { convertSolToUsd, getBalanceByAddress } from "./wallet.util";
 
 export async function getProfileResponse(
   userId: number,
-  userRepository: UserRepository
+  userRepository: UserRepository,
+  ctx: BotContext
 ): Promise<string> {
   const wallets = await userRepository.getUserWallets(userId);
   
@@ -12,14 +14,10 @@ export async function getProfileResponse(
     walletsText += `→ ${wallet.name}: ${wallet.address}\n`;
     const balance = await getBalanceByAddress(wallet.address);
     const usdBalance = await convertSolToUsd(balance);
-    walletsText += `Balance: ${balance} SOL (${usdBalance} USD)\n`;
+    walletsText += ctx.t("walletsText", { balance, usdBalance });
   }
 
-  const msg = "Welcome to Galiaf Trading! 🌸\n" +
-    "Let your trading journey blossom with us!\n\n" +
-    "🌸 Your Solana Wallet Address:\n" +
-    `${walletsText}\n` +
-    `🕒 Last updated: ${new Date().toLocaleTimeString()}`;
+  const lastUpdated = new Date().toLocaleTimeString();
 
-  return msg;
+  return ctx.t("profileMessage", { walletsText, lastUpdated });
 }

@@ -1,4 +1,5 @@
 import type { BotContext, MyConversation } from "../global";
+import { startTradingKeyboard } from "../keyboards/inline.keyboard";
 import { UserRepository } from "../repository/repository";
 import { createWalletFromPK, generateWallet } from "../utils/wallet.util";
 
@@ -37,8 +38,9 @@ export class StateManager {
 
     await this.userRepository.createUser(ctx.from!.id, ctx.from?.username);
     await this.userRepository.addWallet(ctx.from!.id, publicKey, privateKey);
-
-    await ctx.editMessageText(msg);
+    await ctx.editMessageText(msg, {
+      reply_markup: startTradingKeyboard
+    });
 
     return;
   }

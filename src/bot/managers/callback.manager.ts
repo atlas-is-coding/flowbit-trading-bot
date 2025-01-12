@@ -1,6 +1,8 @@
 import type { BotContext } from "../global";
+import { startTradingKeyboard } from "../keyboards/inline.keyboard";
 import { UserRepository } from "../repository/repository";
 import { generateWallet } from "../utils/wallet.util";
+import { getProfileResponse } from "../utils/response.util";
 
 export class CallbackManager {
   private userRepository: UserRepository;
@@ -30,6 +32,14 @@ export class CallbackManager {
     await this.userRepository.createUser(ctx.from!.id, ctx.from?.username);
     await this.userRepository.addWallet(ctx.from!.id, publicKey, privateKey);
 
-    await ctx.editMessageText(msg);
+    await ctx.editMessageText(msg, {
+      reply_markup: startTradingKeyboard
+    });
+  }
+
+  async handleStartTrading(ctx: BotContext): Promise<void> {
+    const message = await getProfileResponse(ctx.from!.id, this.userRepository);
+    
+    await ctx.reply(message);
   }
 }

@@ -53,6 +53,7 @@ class TGBot {
   private setupCallbacks(): void {
     this.bot.callbackQuery("import_wallet", this.callbackManager.handleImportWallet.bind(this));
     this.bot.callbackQuery("create_wallet", this.callbackManager.handleCreateWallet.bind(this));
+    this.bot.callbackQuery("start_trading", this.callbackManager.handleStartTrading.bind(this));
   }
 
   private setupMessageHandlers(): void {

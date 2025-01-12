@@ -69,17 +69,31 @@ export class UserRepository {
     });
   }
 
-  // Добавление кошелька пользователю
+  // Получение следующего доступного номера кошелька
+  private async getNextWalletNumber(userId: number): Promise<number> {
+    const wallets = await this.prisma.wallet.findMany({
+      where: { userId: BigInt(userId) },
+      orderBy: { id: 'desc' },
+      take: 1
+    });
+    
+    return wallets.length > 0 ? wallets[0].id + 1 : 1;
+  }
+
+  // Обновленный метод addWallet
   async addWallet(
     userId: number, 
     walletAddress: string, 
     privateKey?: string
   ): Promise<Wallet> {
+    const nextNumber = await this.getNextWalletNumber(userId);
+
     return await this.prisma.wallet.create({
       data: {
         address: walletAddress,
         privateKey: privateKey,
         userId: BigInt(userId),
+        name: `wallet_${nextNumber}`
       },
     });
   }
@@ -109,5 +123,35 @@ export class UserRepository {
       },
     });
     return users.map(user => new UserModel(user));
+  }
+
+  // Обновление названия кошелька
+  async updateWalletName(
+    userId: number,
+    walletAddress: string,
+    name: string
+  ): Promise<Wallet> {
+    return await this.prisma.wallet.update({
+      where: {
+        address: walletAddress,
+        userId: BigInt(userId),
+      },
+      data: {
+        name,
+      },
+    });
+  }
+
+  // Получение кошелька по адресу
+  async getWalletByAddress(
+    userId: number,
+    walletAddress: string
+  ): Promise<Wallet | null> {
+    return await this.prisma.wallet.findFirst({
+      where: {
+        userId: BigInt(userId),
+        address: walletAddress,
+      },
+    });
   }
 }

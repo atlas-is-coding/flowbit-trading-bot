@@ -1,6 +1,7 @@
 import type { BotContext } from "../global";
 import { walletCreateOptionKeyboard } from "../keyboards/inline.keyboard";
 import { UserRepository } from "../repository/repository";
+import { getProfileResponse } from "../utils/response.util";
 
 export class CommandManager {
   private userRepository: UserRepository;
@@ -19,7 +20,8 @@ export class CommandManager {
     }
 
     if (await this.userRepository.userExists(userId)) {
-      await ctx.reply("Ваш профиль");
+      const message = await getProfileResponse(userId, this.userRepository);
+      await ctx.reply(message);
     } else {
         const welcomeMessage = "🌸 Welcome to Galiaf!" +
         "Your trading journey will be successful with us!\n" +

@@ -21,6 +21,7 @@ model TelegramUser {
 model Wallet {
   id            Int          @id @default(autoincrement())
   address       String       @unique // Публичный адрес кошелька
+  name          String       @default("") // Пользовательское название кошелька
   privateKey    String?      // Приватный ключ (опциональный)
   user          TelegramUser @relation(fields: [userId], references: [id])
   userId        BigInt

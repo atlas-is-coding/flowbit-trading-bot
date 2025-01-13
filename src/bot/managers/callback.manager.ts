@@ -1,5 +1,5 @@
 import type { BotContext } from "../global";
-import { settingsKeyboard, languageKeyboard, startTradingKeyboard, tradingMenuKeyboard } from "../keyboards/inline.keyboard";
+import { settingsKeyboard, languageKeyboard, startTradingKeyboard, tradingMenuKeyboard, walletsSettingsKeyboard, closeKeyboard } from "../keyboards/inline.keyboard";
 import { UserRepository } from "../repository/repository";
 import { generateWallet } from "../utils/wallet.util";
 import { getProfileResponse } from "../utils/response.util";
@@ -9,6 +9,10 @@ export class CallbackManager {
   
   constructor(userRepository: UserRepository) {
     this.userRepository = userRepository;
+  }
+
+  async handleCloseKeyboard(ctx: BotContext): Promise<void> {
+    await ctx.deleteMessage();
   }
 
   // ============================
@@ -22,6 +26,15 @@ export class CallbackManager {
   async handleCreateWallet(ctx: BotContext): Promise<void> {
     const [publicKey, privateKey] = await generateWallet();
     
+    // Проверяем, существует ли уже такой кошелек у пользователя
+    const isExists = await this.userRepository.isWalletExists(ctx.from!.id, publicKey);
+    if (isExists) {
+        await ctx.editMessageText(ctx.t("walletAlreadyExists"), {
+            reply_markup: startTradingKeyboard(ctx)
+        });
+        return;
+    }
+
     await this.userRepository.createUser(ctx.from!.id, ctx.from?.username);
     await this.userRepository.addWallet(ctx.from!.id, publicKey, privateKey);
 
@@ -65,9 +78,7 @@ export class CallbackManager {
   // ===== Settings Section =====
   // ============================ 
   async handleSettings(ctx: BotContext): Promise<void> {
-    const lastUpdated = new Date().toLocaleTimeString();
-    
-    await ctx.editMessageText(ctx.t("settingsMessage", { lastUpdated }), {
+    await ctx.editMessageText(ctx.t("settingsMessage", { lastUpdated: new Date().toLocaleTimeString() }), {
       reply_markup: settingsKeyboard(ctx)
     });
   }
@@ -89,6 +100,36 @@ export class CallbackManager {
 
   async handleCloseSettings(ctx: BotContext): Promise<void> {
     await ctx.deleteMessage();
+  }
+
+  async handleWalletsSettings(ctx: BotContext): Promise<void> {
+    await ctx.editMessageText(ctx.t("walletsSettings", { lastUpdated: new Date().toLocaleTimeString() }), {
+      reply_markup: walletsSettingsKeyboard(ctx)
+    });
+  }
+
+  async handleImportWalletSettings(ctx: BotContext): Promise<void> {
+    await ctx.reply(ctx.t("enterPrivateKey"));
+    await ctx.conversation.enter('importWalletStateFromSettings');
+  }
+
+  async handleCreateWalletSettings(ctx: BotContext): Promise<void> {
+    const [publicKey, privateKey] = await generateWallet();
+
+    // Проверяем, существует ли уже такой кошелек у пользователя
+    const isExists = await this.userRepository.isWalletExists(ctx.from!.id, publicKey);
+    if (isExists) {
+        await ctx.reply(ctx.t("walletAlreadyExists"), {
+            reply_markup: closeKeyboard(ctx)
+        });
+        return;
+    }
+
+    await this.userRepository.addWallet(ctx.from!.id, publicKey, privateKey);
+
+    await ctx.reply(ctx.t("createWalletSettings", { privateKey, publicKey, lastUpdated: new Date().toLocaleTimeString() }), {
+      reply_markup: closeKeyboard(ctx)
+    });
   }
   // ============================
 }

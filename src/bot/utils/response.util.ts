@@ -14,7 +14,7 @@ export async function getProfileResponse(
     walletsText += `→ ${wallet.name}: ${wallet.address}\n`;
     const balance = await getBalanceByAddress(wallet.address);
     const usdBalance = await convertSolToUsd(balance);
-    walletsText += ctx.t("walletsText", { balance, usdBalance });
+    walletsText += ctx.t("balance")+`: ${balance} SOL (${usdBalance} USD)\n`;
   }
 
   const lastUpdated = new Date().toLocaleTimeString();

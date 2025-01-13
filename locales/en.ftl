@@ -79,6 +79,47 @@ refresh = Refresh
 
 close = Close
 
+balance = Balance
+
 language = Language
 
 back = Back
+
+wallets = Wallets
+
+walletsSettings = 
+    🌸 Wallets Settings
+    
+    Manage all your wallets with ease.
+    
+    📖 Learn More:
+    
+    🕒 Last updated: { $lastUpdated }
+
+importWalletSettings = 
+    Your Wallet Has Been Successfully Imported 🟢
+
+    🔑 Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again.
+
+    🔑 Private Key:
+    { $privateKey }
+
+    🌸 Your Solana Wallet Addresses:
+    { $publicKey }
+
+    🕒 Last updated: { $lastUpdated }
+
+createWalletSettings = 
+    Your Wallet Has Been Successfully Created 🟢
+
+    🔑 Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again.
+
+    🔑 Private Key:
+    { $privateKey }
+
+    🌸 Your Solana Wallet Addresses:
+    { $publicKey }
+
+    🕒 Last updated: { $lastUpdated }
+
+walletAlreadyExists = ⚠️ This wallet is already linked to your account.

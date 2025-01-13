@@ -1,7 +1,22 @@
 import { InlineKeyboard } from "grammy";
 import type { BotContext } from "../global";
 
-export const walletCreateOptionKeyboard = (ctx: BotContext) => {
+export const walletsSettingsKeyboard = (ctx: BotContext) => {
+    return new InlineKeyboard(
+        [
+            [
+                { text: ctx.t("importWallet"), callback_data: "import_wallet_settings" },
+                { text: ctx.t("createWallet"), callback_data: "create_wallet_settings" }
+            ],
+            [
+                { text: ctx.t("close"), callback_data: "close_wallets_settings" },
+                { text: ctx.t("back"), callback_data: "back_to_settings" }
+            ]
+        ]
+    )
+}
+
+export const walletsCreateKeyboard = (ctx: BotContext) => {
     return new InlineKeyboard(
         [
             [
@@ -38,7 +53,10 @@ export const settingsKeyboard = (ctx: BotContext) => {
     return new InlineKeyboard(
         [
             [
-                { text: ctx.t("language"), callback_data: "language_settings" },
+                { text: ctx.t("wallets"), callback_data: "wallets_settings" },
+                { text: ctx.t("language"), callback_data: "language_settings" }
+            ],
+            [
                 { text: ctx.t("close"), callback_data: "close_settings" },
                 { text: ctx.t("back"), callback_data: "back_to_trading_menu" }
             ]
@@ -55,6 +73,14 @@ export const languageKeyboard = (ctx: BotContext) => {
                 { text: "Ukranian", callback_data: "language_ukrainian" },
                 { text: ctx.t("back"), callback_data: "back_to_settings" }
             ]
+        ]
+    )
+}
+
+export const closeKeyboard = (ctx: BotContext) => {
+    return new InlineKeyboard(
+        [
+            [{ text: ctx.t("close"), callback_data: "close_keyboard" }]
         ]
     )
 }

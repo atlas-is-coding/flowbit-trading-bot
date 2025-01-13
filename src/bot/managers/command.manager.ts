@@ -1,5 +1,5 @@
 import type { BotContext } from "../global";
-import { tradingMenuKeyboard, walletCreateOptionKeyboard } from "../keyboards/inline.keyboard";
+import { tradingMenuKeyboard, walletsCreateKeyboard } from "../keyboards/inline.keyboard";
 import { UserRepository } from "../repository/repository";
 import { getProfileResponse } from "../utils/response.util";
 
@@ -26,7 +26,7 @@ export class CommandManager {
       });
     } else {
         const sentMsg = await ctx.reply(ctx.t("greeting"), {
-            reply_markup: walletCreateOptionKeyboard(ctx)
+            reply_markup: walletsCreateKeyboard(ctx)
         });
         
         ctx.session.messageToEdit = sentMsg.message_id;

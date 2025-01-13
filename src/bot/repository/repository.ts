@@ -176,4 +176,14 @@ export class UserRepository {
     });
     return user?.locale || 'en'; // Возвращаем 'en' если пользователь не найден
   }
+
+  async isWalletExists(userId: number, walletAddress: string): Promise<boolean> {
+    const wallet = await this.prisma.wallet.findFirst({
+      where: {
+        address: walletAddress,
+        userId: BigInt(userId),
+      },
+    });
+    return !!wallet;
+  }
 }

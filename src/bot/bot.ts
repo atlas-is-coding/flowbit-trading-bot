@@ -61,6 +61,7 @@ class TGBot {
     this.bot.use(conversations());
     this.bot.use(createConversation(this.stateManager.importWalletState, "importWalletState"));
     this.bot.use(createConversation(this.stateManager.importWalletStateFromSettings, "importWalletStateFromSettings"));
+    this.bot.use(createConversation(this.stateManager.renameWalletState, "renameWalletState"));
   }
 
   private setupCommands(): void {
@@ -85,8 +86,15 @@ class TGBot {
     this.bot.callbackQuery("language_settings", this.callbackManager.handleLanguageSettings.bind(this));
     this.bot.callbackQuery("close_settings", this.callbackManager.handleCloseSettings.bind(this));
     this.bot.callbackQuery("back_to_settings", this.callbackManager.handleBackToSettings.bind(this));
+    this.bot.callbackQuery("close_wallets_settings", this.callbackManager.handleCloseWalletsSettings.bind(this));
 
     this.bot.callbackQuery("close_keyboard", this.callbackManager.handleCloseKeyboard.bind(this));
+
+    this.bot.callbackQuery(/^wallet_settings_/, this.callbackManager.handleWalletSettings.bind(this));
+
+    this.bot.callbackQuery("back_to_wallets_settings", this.callbackManager.handleBackToWalletsSettings.bind(this));
+    this.bot.callbackQuery(/^refresh_wallet_page_/, this.callbackManager.handleRefreshWalletPage.bind(this));
+    this.bot.callbackQuery(/^rename_wallet_/, this.callbackManager.handleRenameWallet.bind(this));
   }
 
   private setupMessageHandlers(): void {

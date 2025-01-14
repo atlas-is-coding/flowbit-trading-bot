@@ -21,3 +21,18 @@ export async function getProfileResponse(
 
   return ctx.t("profileMessage", { walletsText, lastUpdated });
 }
+
+export async function getWalletPageResponse(userRepository: UserRepository, ctx: BotContext): Promise<string> {
+  const callbackData = ctx.callbackQuery!.data;
+  const walletAddress = callbackData!.replace('wallet_settings_', '');
+  
+  const wallet = await userRepository.getWalletByAddress(ctx.from!.id, walletAddress);
+  
+  console.log(walletAddress);
+  
+  const balance = await getBalanceByAddress(walletAddress);
+  const usdBalance = await convertSolToUsd(balance);
+
+
+  return ctx.t("walletPage", { walletName: wallet!.name, walletAddress: wallet!.address, balance: balance, usdBalance: usdBalance, lastUpdated: new Date().toLocaleTimeString() });
+}

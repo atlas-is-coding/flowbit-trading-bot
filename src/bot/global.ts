@@ -5,6 +5,7 @@ import { type I18nFlavor } from "@grammyjs/i18n";
 interface SessionData {
     messageToEdit: number;
     locale: string;
+    selectedWallet: string | null;
 };
 
 type BotContext = Context & ConversationFlavor & SessionFlavor<SessionData> & I18nFlavor;

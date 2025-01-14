@@ -8,8 +8,10 @@ export class StateManager {
 
   constructor(userRepository: UserRepository) {
     this.userRepository = userRepository;
+    
     this.importWalletState = this.importWalletState.bind(this);
     this.importWalletStateFromSettings = this.importWalletStateFromSettings.bind(this);
+    this.renameWalletState = this.renameWalletState.bind(this);
   }
 
   async importWalletState(conversation: MyConversation, ctx: BotContext) {
@@ -72,4 +74,14 @@ export class StateManager {
 
     return;
   } 
+
+  async renameWalletState(conversation: MyConversation, ctx: BotContext) {
+    const userResponse = await conversation.wait();
+    
+    await this.userRepository.updateWalletName(ctx.from!.id, ctx.session.selectedWallet!, userResponse.message!.text!);
+
+    await ctx.reply(ctx.t("walletRenamed", { walletName: userResponse.message!.text! }));
+
+    return;
+  }
 }

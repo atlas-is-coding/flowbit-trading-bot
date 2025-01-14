@@ -123,3 +123,18 @@ createWalletSettings =
     🕒 Last updated: { $lastUpdated }
 
 walletAlreadyExists = ⚠️ This wallet is already linked to your account.
+
+walletPage = 
+    🌸 Your Solana Wallet Address:
+
+    → { $walletName }: { $walletAddress }
+
+    Balance: { $balance } SOL (USD { $usdBalance })
+
+    🕒 Last updated: { $lastUpdated }
+
+renameWallet = Rename Wallet
+
+enterNewWalletName = Enter new wallet name:
+
+walletRenamed = Wallet renamed to { $walletName }

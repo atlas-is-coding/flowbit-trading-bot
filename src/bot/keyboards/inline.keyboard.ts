@@ -1,9 +1,28 @@
 import { InlineKeyboard } from "grammy";
 import type { BotContext } from "../global";
+import type { UserRepository } from "../repository/repository";
 
-export const walletsSettingsKeyboard = (ctx: BotContext) => {
+export const walletsSettingsKeyboard = async (ctx: BotContext, userRepository: UserRepository) => {
+    const wallets = await userRepository.getUserWallets(ctx.from!.id);
+
+    const walletButtons = wallets.map(wallet => ({
+        text: wallet.name || wallet.address.slice(0, 8) + '...',
+        callback_data: `wallet_settings_${wallet.address}`
+    }));
+
+    // Группируем кнопки по 3 в строке
+    const walletRows = walletButtons.reduce((rows: any[], button, index) => {
+        if (index % 3 === 0) {
+            rows.push([button]);
+        } else {
+            rows[rows.length - 1].push(button);
+        }
+        return rows;
+    }, []);
+
     return new InlineKeyboard(
         [
+            ...walletRows,
             [
                 { text: ctx.t("importWallet"), callback_data: "import_wallet_settings" },
                 { text: ctx.t("createWallet"), callback_data: "create_wallet_settings" }
@@ -81,6 +100,21 @@ export const closeKeyboard = (ctx: BotContext) => {
     return new InlineKeyboard(
         [
             [{ text: ctx.t("close"), callback_data: "close_keyboard" }]
+        ]
+    )
+}
+
+export const walletPageKeyboard = (ctx: BotContext, walletAddress: string) => {
+    return new InlineKeyboard(
+        [
+            [
+                { text: ctx.t("renameWallet"), callback_data: `rename_wallet_${walletAddress}` },
+            ],
+            [
+                { text: ctx.t("close"), callback_data: "close_keyboard" },
+                { text: ctx.t("back"), callback_data: "back_to_wallets_settings" },
+                { text: ctx.t("refresh"), callback_data: `refresh_wallet_page_${walletAddress}` }
+            ]
         ]
     )
 }

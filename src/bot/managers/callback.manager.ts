@@ -1,8 +1,8 @@
 import type { BotContext } from "../global";
-import { settingsKeyboard, languageKeyboard, startTradingKeyboard, tradingMenuKeyboard, walletsSettingsKeyboard, closeKeyboard } from "../keyboards/inline.keyboard";
+import { settingsKeyboard, languageKeyboard, startTradingKeyboard, tradingMenuKeyboard, walletsSettingsKeyboard, closeKeyboard, walletPageKeyboard } from "../keyboards/inline.keyboard";
 import { UserRepository } from "../repository/repository";
-import { generateWallet } from "../utils/wallet.util";
-import { getProfileResponse } from "../utils/response.util";
+import { convertSolToUsd, generateWallet, getBalanceByAddress } from "../utils/wallet.util";
+import { getProfileResponse, getWalletPageResponse } from "../utils/response.util";
 
 export class CallbackManager {
   private userRepository: UserRepository;
@@ -26,15 +26,6 @@ export class CallbackManager {
   async handleCreateWallet(ctx: BotContext): Promise<void> {
     const [publicKey, privateKey] = await generateWallet();
     
-    // Проверяем, существует ли уже такой кошелек у пользователя
-    const isExists = await this.userRepository.isWalletExists(ctx.from!.id, publicKey);
-    if (isExists) {
-        await ctx.editMessageText(ctx.t("walletAlreadyExists"), {
-            reply_markup: startTradingKeyboard(ctx)
-        });
-        return;
-    }
-
     await this.userRepository.createUser(ctx.from!.id, ctx.from?.username);
     await this.userRepository.addWallet(ctx.from!.id, publicKey, privateKey);
 
@@ -104,8 +95,11 @@ export class CallbackManager {
 
   async handleWalletsSettings(ctx: BotContext): Promise<void> {
     await ctx.editMessageText(ctx.t("walletsSettings", { lastUpdated: new Date().toLocaleTimeString() }), {
-      reply_markup: walletsSettingsKeyboard(ctx)
+      reply_markup: await walletsSettingsKeyboard(ctx, this.userRepository)
     });
+  }
+  async handleCloseWalletsSettings(ctx: BotContext): Promise<void> {
+    await ctx.deleteMessage();
   }
 
   async handleImportWalletSettings(ctx: BotContext): Promise<void> {
@@ -130,6 +124,74 @@ export class CallbackManager {
     await ctx.reply(ctx.t("createWalletSettings", { privateKey, publicKey, lastUpdated: new Date().toLocaleTimeString() }), {
       reply_markup: closeKeyboard(ctx)
     });
+  }
+  // ============================
+
+  // ============================
+  // ===== Wallet Settings =====
+  // ============================ 
+  async handleWalletSettings(ctx: BotContext): Promise<void> {
+    const callbackData = ctx.callbackQuery!.data;
+    const walletAddress = callbackData!.replace('wallet_settings_', '');
+    
+    const wallet = await this.userRepository.getWalletByAddress(ctx.from!.id, walletAddress);
+    
+    const balance = await getBalanceByAddress(wallet!.address);
+    const usdBalance = await convertSolToUsd(balance);
+    
+
+    await ctx.editMessageText(
+        ctx.t("walletPage", { 
+            walletName: wallet!.name, 
+            walletAddress: wallet!.address, 
+            balance: balance, 
+            usdBalance: usdBalance, 
+            lastUpdated: new Date().toLocaleTimeString() 
+        }), 
+        {
+            reply_markup: walletPageKeyboard(ctx, walletAddress)
+        }
+    );
+  }
+
+  async handleBackToWalletsSettings(ctx: BotContext): Promise<void> {
+    await ctx.editMessageText(ctx.t("walletsSettings", { lastUpdated: new Date().toLocaleTimeString() }), {
+      reply_markup: await walletsSettingsKeyboard(ctx, this.userRepository)
+    });
+  }
+
+  async handleRefreshWalletPage(ctx: BotContext): Promise<void> {
+    const callbackData = ctx.callbackQuery!.data;
+    const walletAddress = callbackData!.replace('refresh_wallet_page_', '');
+    
+    const wallet = await this.userRepository.getWalletByAddress(ctx.from!.id, walletAddress);
+    const balance = await getBalanceByAddress(wallet!.address);
+    const usdBalance = await convertSolToUsd(balance);
+
+    await ctx.editMessageText(
+        ctx.t("walletPage", { 
+            walletName: wallet!.name, 
+            walletAddress: wallet!.address, 
+            balance: balance, 
+            usdBalance: usdBalance, 
+            lastUpdated: new Date().toLocaleTimeString() 
+        }), 
+        {
+            reply_markup: walletPageKeyboard(ctx, walletAddress)
+        }
+    );
+  }
+
+  // TODO: Rename wallet
+  async handleRenameWallet(ctx: BotContext): Promise<void> {
+    const callbackData = ctx.callbackQuery!.data;
+    const walletAddress = callbackData!.replace('rename_wallet_', '');
+    
+    // Сохраняем адрес кошелька для использования в state
+    ctx.session.selectedWallet = walletAddress;
+    
+    await ctx.reply(ctx.t("enterNewWalletName"));
+    await ctx.conversation.enter('renameWalletState');
   }
   // ============================
 }

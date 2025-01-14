@@ -93,9 +93,11 @@ export const languageKeyboard = (ctx: BotContext) => {
     return new InlineKeyboard(
         [
             [
-                { text: "English", callback_data: "language_english" },
-                { text: "Russian", callback_data: "language_russian" },
-                { text: "Ukranian", callback_data: "language_ukrainian" },
+                { text: ctx.t("enLanguage"), callback_data: "set_language_en" },
+                { text: ctx.t("ruLanguage"), callback_data: "set_language_ru" },
+                
+            ],
+            [
                 { text: ctx.t("back"), callback_data: "back_to_settings" }
             ]
         ]

@@ -82,7 +82,7 @@ export class CallbackManager {
   }
 
   async handleLanguageSettings(ctx: BotContext): Promise<void> {
-    const currentLanguage = ctx.from?.language_code!;
+    const currentLanguage = await this.userRepository.getUserLocale(ctx.from!.id);
     
     await ctx.editMessageText(ctx.t("languageMessage", { currentLanguage }), {
       reply_markup: languageKeyboard(ctx)
@@ -215,4 +215,15 @@ export class CallbackManager {
     await ctx.deleteMessage();
   }
   // ============================
+
+  async handleSetLanguage(ctx: BotContext): Promise<void> {
+    const callbackData = ctx.callbackQuery!.data;
+    const language = callbackData!.replace('set_language_', '');
+   
+    await this.userRepository.updateUserLocale(ctx.from!.id, language);
+    await ctx.i18n.setLocale(language);
+    await ctx.i18n.renegotiateLocale();
+
+    await ctx.answerCallbackQuery(ctx.t("languageUpdated"));
+  }
 }

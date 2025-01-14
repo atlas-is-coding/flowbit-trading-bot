@@ -106,7 +106,7 @@ class TGBot {
     this.bot.callbackQuery(/^delete_wallet_yes_/, this.callbackManager.handleDeleteWalletConfirmationYes.bind(this));
     this.bot.callbackQuery("delete_wallet_no", this.callbackManager.handleDeleteWalletConfirmationNo.bind(this));
 
-    
+    this.bot.callbackQuery(/^set_language_/, this.callbackManager.handleSetLanguage.bind(this));
   }
 
   private setupMessageHandlers(): void {

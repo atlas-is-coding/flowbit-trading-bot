@@ -131,8 +131,14 @@ walletRenamed = 🌊 <b>Wallet renamed to:</b> { $walletName }
 
 walletDeleted = 🗑️ <b>Wallet deleted</b>
 
-deleteWalletConfirmation = ⚠️ <b>Are you sure you want to delete this wallet?</b>
+deleteWalletConfirmation = 🗑️ <b>Are you sure you want to delete this wallet?</b>
 
 deleteWalletConfirmationYes = ✅ Yes
 
 deleteWalletConfirmationNo = ❌ No
+
+ruLanguage = 🇷🇺 Russian
+
+enLanguage = 🇺🇸 English
+
+languageUpdated = 🌐 Language updated

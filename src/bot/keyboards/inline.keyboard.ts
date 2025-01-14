@@ -28,8 +28,10 @@ export const walletsSettingsKeyboard = async (ctx: BotContext, userRepository: U
                 { text: ctx.t("createWallet"), callback_data: "create_wallet_settings" }
             ],
             [
-                { text: ctx.t("close"), callback_data: "close_wallets_settings" },
                 { text: ctx.t("back"), callback_data: "back_to_settings" }
+            ],
+            [
+                { text: ctx.t("close"), callback_data: "close_wallets_settings" },
             ]
         ]
     )
@@ -62,6 +64,8 @@ export const tradingMenuKeyboard = (ctx: BotContext) => {
             [
                 { text: ctx.t("settings"), callback_data: "settings" },
                 { text: ctx.t("refresh"), callback_data: "refresh_trading_menu" },
+            ],
+            [
                 { text: ctx.t("close"), callback_data: "close_trading_menu" }
             ]
         ]
@@ -76,8 +80,10 @@ export const settingsKeyboard = (ctx: BotContext) => {
                 { text: ctx.t("language"), callback_data: "language_settings" }
             ],
             [
-                { text: ctx.t("close"), callback_data: "close_settings" },
                 { text: ctx.t("back"), callback_data: "back_to_trading_menu" }
+            ],
+            [
+                { text: ctx.t("close"), callback_data: "close_settings" },
             ]
         ]
     )
@@ -111,9 +117,11 @@ export const walletPageKeyboard = (ctx: BotContext, walletAddress: string) => {
                 { text: ctx.t("renameWallet"), callback_data: `rename_wallet_${walletAddress}` },
             ],
             [
-                { text: ctx.t("close"), callback_data: "close_keyboard" },
                 { text: ctx.t("back"), callback_data: "back_to_wallets_settings" },
                 { text: ctx.t("refresh"), callback_data: `refresh_wallet_page_${walletAddress}` }
+            ],
+            [
+                { text: ctx.t("close"), callback_data: "close_keyboard" },
             ]
         ]
     )

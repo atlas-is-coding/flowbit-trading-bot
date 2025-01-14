@@ -1,140 +1,128 @@
 greeting = 
-    🌸 Welcome to Galiaf Trading Bot!
-    Your trading journey will be successful with us!
-    
-    🔑 First of all, you need to create or import wallet
+    🌊 <b>Welcome to Flowbit Bot!</b>
+    Your trading journey flows seamlessly with us!
+
+    🔑 Let's get started by creating or importing your wallet
 
 profileMessage =
-    Welcome to Galiaf Trading! 🌸
-    Let your trading journey blossom with us!
-    
-    🌸 Your Solana Wallet Address:
+    🌊 <b>Welcome to Flowbit</b>
+    Let your trading journey flow effortlessly with us!
+
+    🌟 <b>Your Solana Wallet Address:</b>
     { $walletsText }
 
     🕒 Last updated: { $lastUpdated }
 
-walletsText = Balance: { $balance } SOL ({ $usdBalance } USD)
-
-errorWhileFetchingUserData = Sorry, we couldn't fetch your data. Please try again later.
+errorWhileFetchingUserData = **Oops!** We couldn’t fetch your data. Please try again later.
 
 enterPrivateKey = 🔑 Enter you private key:
 
 settingsMessage = 
-    🌸 Bloom Settings
-    
-    📖 Learn More:
-    
+    🌊 <b>Flowbit Settings</b>
+
+    ✨ Learn More: <a href="https://flowbit.io">here</a>
+
     🕒 Last updated: { $lastUpdated }
 
 languageMessage = 
-    🌸 Language Settings
+    🌊 <b>Language Settings</b>
     
-    Your current language is: { $currentLanguage }
+    <b>Your current language is:</b> { $currentLanguage }
     
-    Supported languages
+    <b>Supported languages:</b>
 
 walletCreated = 
-    🟢 Your Wallet Has Been Successfully Created 
-    
-    🔑 Save your Private Key: 
-    Here is your private key. Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again. 
-    
-    🟣 Private Key: 
-    { $privateKey }
+    🟢 <b>Your Wallet Has Been Successfully Created</b>
+    ⚠️ <i>Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again.</i>
 
-    🟣 Your Solana Wallet Addresses: 
-    { $publicKey }
+    🔑 <b>Private Key:</b>
+    <code>{ $privateKey }</code>
+
+    👛 <b>Your Solana Wallet Addresses:</b>
+    <code>{ $publicKey }</code>
     
     To start trading, please deposit SOL to your address. 
-    
     Only deposit SOL through SOL network.
 
 walletImported = 
-    🟢 Your Wallet Has Been Successfully Imported 🟢    
-    
-    🔑 Save your Private Key: 
-    Here is your private key. Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again. 
-    
-    🟣 Private Key: 
-    { $privateKey }
+    🟢 <b>Your Wallet Has Been Successfully Imported</b>
+    ⚠️ <i>Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again.</i>
 
-    🟣 Your Solana Wallet Addresses: 
-    { $publicKey }
+    🔑 <b>Private Key:</b>
+    <code>{ $privateKey }</code>
+
+    👛 <b>Your Solana Wallet Addresses:</b>
+    <code>{ $publicKey }</code>
     
     To start trading, please deposit SOL to your address. 
-    
     Only deposit SOL through SOL network.
 
-invalidPrivateKey =  ❌ Invalid private key format. Please enter a valid Solana private key.
+invalidPrivateKey =  ❌ <b>Invalid private key format.</b> Please enter a valid Solana private key.
 
-importWallet = Import Wallet
+importWallet = 📥 Import Wallet
 
-createWallet = Create Wallet
+createWallet = 🆕 Create Wallet
 
-startTrading = Start Trading
+startTrading = 🚀 Start Trading
 
-settings = Settings
+settings = ⚙️ Settings
 
-refresh = Refresh
+refresh = 🔄 Refresh
 
-close = Close
+close = 🚫 Close
 
-balance = Balance
+balance = ˪💰 <b>Balance</b>
 
-language = Language
+language = 🌐 Language
 
-back = Back
+back = ◀️ Back
 
-wallets = Wallets
+wallets = 👛 Wallets
 
 walletsSettings = 
-    🌸 Wallets Settings
-    
-    Manage all your wallets with ease.
-    
-    📖 Learn More:
-    
+    🌊 <b>Wallets Settings</b>
+    Manage all your wallets effortlessly.
+
+    ✨ Learn More: <a href="https://flowbit.io">here</a>
+
     🕒 Last updated: { $lastUpdated }
 
 importWalletSettings = 
-    Your Wallet Has Been Successfully Imported 🟢
+    🟢 <b>Your Wallet Has Been Successfully Imported</b>
+    ⚠️ <i>Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again.</i>
 
-    🔑 Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again.
+    🔑 <b>Private Key:</b>
+    <code>{ $privateKey }</code>
 
-    🔑 Private Key:
-    { $privateKey }
-
-    🌸 Your Solana Wallet Addresses:
-    { $publicKey }
+    👛 <b>Your Solana Wallet Addresses:</b>
+    <code>{ $publicKey }</code>
 
     🕒 Last updated: { $lastUpdated }
 
 createWalletSettings = 
-    Your Wallet Has Been Successfully Created 🟢
+    🟢 <b>Your Wallet Has Been Successfully Created</b>
+    ⚠️ <i>Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again.</i>
 
-    🔑 Please store it securely and do not share it with anyone. Once this message is deleted, you won't be able to retrieve your private key again.
+    🔑 <b>Private Key:</b>
+    <code>{ $privateKey }</code>
 
-    🔑 Private Key:
-    { $privateKey }
-
-    🌸 Your Solana Wallet Addresses:
-    { $publicKey }
+    👛 <b>Your Solana Wallet Addresses:</b>
+    <code>{ $publicKey }</code>
 
     🕒 Last updated: { $lastUpdated }
 
-walletAlreadyExists = ⚠️ This wallet is already linked to your account.
+walletAlreadyExists = ⚠️ <b>This wallet is already linked to your account.</b>
 
 walletPage = 
-    🌸 Your Solana Wallet Address:
+    🌊 <b>Your Solana Wallet Address:</b>
 
-    → { $walletName }: { $walletAddress }
-
-    Balance: { $balance } SOL (USD { $usdBalance })
+    → { $walletName }: <code>{ $walletAddress }</code>
+    ˪💰 Balance: { $balance } SOL (~USD { $usdBalance })
 
     🕒 Last updated: { $lastUpdated }
 
-renameWallet = Rename Wallet
+renameWallet = ✏️ Rename Wallet
 
-enterNewWalletName = Enter new wallet name:
+enterNewWalletName = 🌊 <b>Enter a new wallet name:</b>
 
-walletRenamed = Wallet renamed to { $walletName }
+walletRenamed = 🌊 <b>Wallet renamed to:</b> { $walletName }

@@ -78,9 +78,13 @@ export class StateManager {
   async renameWalletState(conversation: MyConversation, ctx: BotContext) {
     const userResponse = await conversation.wait();
     
-    await this.userRepository.updateWalletName(ctx.from!.id, ctx.session.selectedWallet!, userResponse.message!.text!);
+    const newWalletName = userResponse.message!.text!;
 
-    await ctx.reply(ctx.t("walletRenamed", { walletName: userResponse.message!.text! }));
+    userResponse.deleteMessage();
+
+    await this.userRepository.updateWalletName(ctx.from!.id, ctx.session.selectedWallet!, newWalletName);
+
+    await ctx.reply(ctx.t("walletRenamed", { walletName: newWalletName }));
 
     return;
   }

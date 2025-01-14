@@ -182,7 +182,7 @@ export class CallbackManager {
     );
   }
 
-  // TODO: Rename wallet
+
   async handleRenameWallet(ctx: BotContext): Promise<void> {
     const callbackData = ctx.callbackQuery!.data;
     const walletAddress = callbackData!.replace('rename_wallet_', '');
@@ -191,6 +191,7 @@ export class CallbackManager {
     ctx.session.selectedWallet = walletAddress;
     
     await ctx.reply(ctx.t("enterNewWalletName"));
+
     await ctx.conversation.enter('renameWalletState');
   }
   // ============================

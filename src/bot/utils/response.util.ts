@@ -11,7 +11,7 @@ export async function getProfileResponse(
   
   let walletsText = "";
   for (const wallet of wallets) {
-    walletsText += `→ ${wallet.name}: ${wallet.address}\n`;
+    walletsText += `→ ${wallet.name}: <code>${wallet.address}</code>\n`;
     const balance = await getBalanceByAddress(wallet.address);
     const usdBalance = await convertSolToUsd(balance);
     walletsText += ctx.t("balance")+`: ${balance} SOL (${usdBalance} USD)\n`;

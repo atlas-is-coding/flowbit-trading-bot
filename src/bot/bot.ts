@@ -1,6 +1,9 @@
 import { Bot, session } from "grammy";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import { I18n } from "@grammyjs/i18n";
+import { hydrateReply, parseMode } from "@grammyjs/parse-mode";
+import type { ParseModeFlavor } from "@grammyjs/parse-mode";
+
 
 import dotenv from "dotenv";
 import { UserRepository } from "./repository/repository";
@@ -15,7 +18,7 @@ import { CommandManager } from "./managers/command.manager";
 dotenv.config();
 
 class TGBot {
-  private bot: Bot<BotContext>;
+  private bot: Bot<ParseModeFlavor<BotContext>>;
   private userRepository: UserRepository;
   
   private callbackManager: CallbackManager;
@@ -33,7 +36,7 @@ class TGBot {
     this.callbackManager = new CallbackManager(this.userRepository);
     this.stateManager = new StateManager(this.userRepository);
     
-    this.bot = new Bot<BotContext>(process.env.BOT_TOKEN);
+    this.bot = new Bot<ParseModeFlavor<BotContext>>(process.env.BOT_TOKEN);
     
     this.setupMiddlewares();
     this.setupCommands();
@@ -57,6 +60,10 @@ class TGBot {
     }));
     
     this.bot.use(i18n);
+    
+    this.bot.api.config.use(parseMode("HTML"));
+    this.bot.use(hydrateReply);
+
     
     this.bot.use(conversations());
     this.bot.use(createConversation(this.stateManager.importWalletState, "importWalletState"));

@@ -115,6 +115,7 @@ export const walletPageKeyboard = (ctx: BotContext, walletAddress: string) => {
         [
             [
                 { text: ctx.t("renameWallet"), callback_data: `rename_wallet_${walletAddress}` },
+                { text: ctx.t("deleteWallet"), callback_data: `del_wallet_${walletAddress}` },
             ],
             [
                 { text: ctx.t("back"), callback_data: "back_to_wallets_settings" },
@@ -123,6 +124,15 @@ export const walletPageKeyboard = (ctx: BotContext, walletAddress: string) => {
             [
                 { text: ctx.t("close"), callback_data: "close_keyboard" },
             ]
+        ]
+    )
+}
+
+export const deleteWalletConfirmationKeyboard = (ctx: BotContext, walletAddress: string) => {
+    return new InlineKeyboard(
+        [
+            [{ text: ctx.t("deleteWalletConfirmationYes"), callback_data: `delete_wallet_yes_${walletAddress}` }],
+            [{ text: ctx.t("deleteWalletConfirmationNo"), callback_data: "delete_wallet_no" }]
         ]
     )
 }

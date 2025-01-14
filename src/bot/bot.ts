@@ -54,7 +54,6 @@ class TGBot {
     
     this.bot.use(session({ 
       initial: () => ({ 
-        messageToEdit: -1, 
         locale: "en" 
       }) 
     }));
@@ -101,7 +100,13 @@ class TGBot {
 
     this.bot.callbackQuery("back_to_wallets_settings", this.callbackManager.handleBackToWalletsSettings.bind(this));
     this.bot.callbackQuery(/^refresh_wallet_page_/, this.callbackManager.handleRefreshWalletPage.bind(this));
+    
     this.bot.callbackQuery(/^rename_wallet_/, this.callbackManager.handleRenameWallet.bind(this));
+    this.bot.callbackQuery(/^del_wallet_/, this.callbackManager.handleDeleteWalletConfirmation.bind(this));
+    this.bot.callbackQuery(/^delete_wallet_yes_/, this.callbackManager.handleDeleteWalletConfirmationYes.bind(this));
+    this.bot.callbackQuery("delete_wallet_no", this.callbackManager.handleDeleteWalletConfirmationNo.bind(this));
+
+    
   }
 
   private setupMessageHandlers(): void {

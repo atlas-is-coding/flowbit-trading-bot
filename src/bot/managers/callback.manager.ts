@@ -1,5 +1,5 @@
 import type { BotContext } from "../global";
-import { settingsKeyboard, languageKeyboard, startTradingKeyboard, tradingMenuKeyboard, walletsSettingsKeyboard, closeKeyboard, walletPageKeyboard } from "../keyboards/inline.keyboard";
+import { settingsKeyboard, languageKeyboard, startTradingKeyboard, tradingMenuKeyboard, walletsSettingsKeyboard, closeKeyboard, walletPageKeyboard, deleteWalletConfirmationKeyboard } from "../keyboards/inline.keyboard";
 import { UserRepository } from "../repository/repository";
 import { convertSolToUsd, generateWallet, getBalanceByAddress } from "../utils/wallet.util";
 import { getProfileResponse, getWalletPageResponse } from "../utils/response.util";
@@ -182,7 +182,6 @@ export class CallbackManager {
     );
   }
 
-
   async handleRenameWallet(ctx: BotContext): Promise<void> {
     const callbackData = ctx.callbackQuery!.data;
     const walletAddress = callbackData!.replace('rename_wallet_', '');
@@ -193,6 +192,27 @@ export class CallbackManager {
     await ctx.reply(ctx.t("enterNewWalletName"));
 
     await ctx.conversation.enter('renameWalletState');
+  }
+
+  async handleDeleteWalletConfirmation(ctx: BotContext): Promise<void> {
+    const callbackData = ctx.callbackQuery!.data;
+    const walletAddress = callbackData!.replace('del_wallet_', '');
+    
+    await ctx.reply(ctx.t("deleteWalletConfirmation"), {
+      reply_markup: deleteWalletConfirmationKeyboard(ctx, walletAddress)
+    });
+  }
+
+  async handleDeleteWalletConfirmationYes(ctx: BotContext): Promise<void> {
+    const callbackData = ctx.callbackQuery!.data;
+    const walletAddress = callbackData!.replace('delete_wallet_yes_', '');
+    
+    await this.userRepository.removeWallet(ctx.from!.id, walletAddress);
+    await ctx.editMessageText(ctx.t("walletDeleted"));
+  }
+
+  async handleDeleteWalletConfirmationNo(ctx: BotContext): Promise<void> {
+    await ctx.deleteMessage();
   }
   // ============================
 }

@@ -25,11 +25,9 @@ export class CommandManager {
         reply_markup: tradingMenuKeyboard(ctx)
       });
     } else {
-        const sentMsg = await ctx.reply(ctx.t("greeting"), {
+        await ctx.reply(ctx.t("greeting"), {
             reply_markup: walletsCreateKeyboard(ctx)
         });
-        
-        ctx.session.messageToEdit = sentMsg.message_id;
     }
   }
 }

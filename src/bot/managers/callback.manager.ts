@@ -139,17 +139,19 @@ export class CallbackManager {
     const balance = await getBalanceByAddress(wallet!.address);
     const usdBalance = await convertSolToUsd(balance);
     
+    const isDefaultWallet = await this.userRepository.isDefaultWallet(ctx.from!.id, walletAddress);
 
     await ctx.editMessageText(
         ctx.t("walletPage", { 
             walletName: wallet!.name, 
             walletAddress: wallet!.address, 
             balance: balance, 
-            usdBalance: usdBalance, 
+            usdBalance: usdBalance,
+            isDefaultWallet: isDefaultWallet ? "🟢" : "🔴",
             lastUpdated: new Date().toLocaleTimeString() 
         }), 
         {
-            reply_markup: walletPageKeyboard(ctx, walletAddress)
+            reply_markup: await walletPageKeyboard(ctx, walletAddress, this.userRepository)
         }
     );
   }
@@ -168,16 +170,19 @@ export class CallbackManager {
     const balance = await getBalanceByAddress(wallet!.address);
     const usdBalance = await convertSolToUsd(balance);
 
+    const isDefaultWallet = await this.userRepository.isDefaultWallet(ctx.from!.id, walletAddress);
+
     await ctx.editMessageText(
         ctx.t("walletPage", { 
             walletName: wallet!.name, 
             walletAddress: wallet!.address, 
             balance: balance, 
             usdBalance: usdBalance, 
+            isDefaultWallet: isDefaultWallet ? "🟢" : "🔴",
             lastUpdated: new Date().toLocaleTimeString() 
         }), 
         {
-            reply_markup: walletPageKeyboard(ctx, walletAddress)
+            reply_markup: await walletPageKeyboard(ctx, walletAddress, this.userRepository)
         }
     );
   }
@@ -214,6 +219,34 @@ export class CallbackManager {
   async handleDeleteWalletConfirmationNo(ctx: BotContext): Promise<void> {
     await ctx.deleteMessage();
   }
+
+  async handleSetDefaultWallet(ctx: BotContext): Promise<void> {
+    const callbackData = ctx.callbackQuery!.data;
+    const walletAddress = callbackData!.replace('set_default_wallet_', '');
+
+    await ctx.answerCallbackQuery(ctx.t("walletSetAsDefault"));
+    await this.userRepository.setDefaultWallet(ctx.from!.id, walletAddress);
+    
+    // Обновляем страницу кошелька после установки дефолтного
+    const wallet = await this.userRepository.getWalletByAddress(ctx.from!.id, walletAddress);
+    const balance = await getBalanceByAddress(wallet!.address);
+    const usdBalance = await convertSolToUsd(balance);
+    const isDefaultWallet = await this.userRepository.isDefaultWallet(ctx.from!.id, walletAddress);
+
+    await ctx.editMessageText(
+        ctx.t("walletPage", { 
+            walletName: wallet!.name, 
+            walletAddress: wallet!.address, 
+            balance: balance, 
+            usdBalance: usdBalance,
+            isDefaultWallet: isDefaultWallet ? "🟢" : "🔴",
+            lastUpdated: new Date().toLocaleTimeString() 
+        }), 
+        {
+            reply_markup: await walletPageKeyboard(ctx, walletAddress, this.userRepository)
+        }
+    );
+  }
   // ============================
 
   async handleSetLanguage(ctx: BotContext): Promise<void> {
@@ -225,5 +258,14 @@ export class CallbackManager {
     await ctx.i18n.renegotiateLocale();
 
     await ctx.answerCallbackQuery(ctx.t("languageUpdated"));
+    
+    // Обновляем UI после смены языка
+    await ctx.editMessageText(
+        ctx.t("languageMessage", { 
+            currentLanguage: language,
+            lastUpdated: new Date().toLocaleTimeString() 
+        }), 
+        { reply_markup: languageKeyboard(ctx) }
+    );
   }
 }

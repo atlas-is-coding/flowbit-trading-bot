@@ -3,32 +3,29 @@ import { PrismaClient, TelegramUser, Wallet } from '@prisma/client';
 import { UserModel } from './models/user.model';
 
 export class UserRepository {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   // Создание нового пользователя
-  async createUser(id: number, username?: string, locale: string = 'en'): Promise<UserModel> {
-    // Сначала проверяем, существует ли пользователь
-    const existingUser = await this.prisma.telegramUser.findUnique({
-      where: { id: BigInt(id) },
-      include: { wallets: true }
+  async createUser(userId: number, username?: string): Promise<UserModel> {
+    // Используем upsert вместо create чтобы избежать ошибок при повторном создании
+    const user = await this.prisma.telegramUser.upsert({
+      where: {
+        id: BigInt(userId)
+      },
+      update: {
+        username: username
+      },
+      create: {
+        id: BigInt(userId),
+        username: username,
+        locale: "en"
+      }
     });
 
-    if (existingUser) {
-      // Если пользователь существует, возвращаем его
-      return new UserModel(existingUser);
-    }
-
-    // Если пользователь не существует, создаем нового
-    const user = await this.prisma.telegramUser.create({
-      data: {
-        id: BigInt(id),
-        username,
-        locale,
-      },
-      include: {
-        wallets: true,
-      },
-    });
     return new UserModel(user);
   }
 
@@ -83,19 +80,21 @@ export class UserRepository {
 
   // Обновленный метод addWallet
   async addWallet(
-    userId: number, 
-    walletAddress: string, 
-    privateKey?: string
+    userId: number,
+    address: string,
+    privateKey: string,
+    name?: string
   ): Promise<Wallet> {
-    const nextNumber = await this.getNextWalletNumber(userId);
-
+    // Сначала проверяем/создаем пользователя
+    await this.createUser(userId);
+    
     return await this.prisma.wallet.create({
       data: {
-        address: walletAddress,
-        privateKey: privateKey,
-        userId: BigInt(userId),
-        name: `wallet_${nextNumber}`
-      },
+        address,
+        privateKey,
+        name: name || `Wallet ${await this.getNextWalletNumber(userId)}`,
+        userId: BigInt(userId)
+      }
     });
   }
 
@@ -185,5 +184,68 @@ export class UserRepository {
       },
     });
     return !!wallet;
+  }
+
+  async setDefaultWallet(userId: number, walletAddress: string): Promise<void> {
+    const wallet = await this.prisma.wallet.findFirst({
+      where: {
+        userId: BigInt(userId),
+        address: walletAddress,
+      },
+    });
+
+    if (!wallet) {
+      throw new Error('Кошелек не найден');
+    }
+
+    await this.prisma.telegramUser.update({
+      where: {
+        id: BigInt(userId),
+      },
+      data: {
+        defaultWalletId: wallet.id,
+      },
+    });
+  }
+
+  async getDefaultWallet(userId: number): Promise<Wallet | null> {
+    const user = await this.prisma.telegramUser.findUnique({
+      where: {
+        id: BigInt(userId),
+      },
+      include: {
+        wallets: true,
+      },
+    });
+
+    if (!user || !user.defaultWalletId) {
+      return null;
+    }
+
+    return user.wallets.find(wallet => wallet.id === user.defaultWalletId) || null;
+  }
+
+  async isDefaultWallet(userId: number, walletAddress: string): Promise<boolean> {
+    const user = await this.prisma.telegramUser.findUnique({
+      where: {
+        id: BigInt(userId),
+      },
+      include: {
+        wallets: true,
+      },
+    });
+
+    if (!user || !user.defaultWalletId) {
+      return false;
+    }
+
+    const wallet = await this.prisma.wallet.findFirst({
+      where: {
+        userId: BigInt(userId),
+        address: walletAddress,
+      },
+    });
+
+    return wallet?.id === user.defaultWalletId;
   }
 }

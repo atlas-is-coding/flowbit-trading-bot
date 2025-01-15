@@ -119,6 +119,8 @@ walletPage =
     → { $walletName }: <code>{ $walletAddress }</code>
     ˪💰 Баланс: { $balance } SOL (~USD { $usdBalance })
 
+    { $isDefaultWallet } Default Wallet
+
     🕒 Последнее обновление: { $lastUpdated }
 
 renameWallet = ✏️ Переименовать кошелек
@@ -142,3 +144,9 @@ ruLanguage = 🇷🇺 Русский
 enLanguage = 🇺🇸 Английский
 
 languageUpdated = 🌐 Язык обновлен
+
+manualBuyer = 🛒 Ручная покупка
+
+defaultWallet = Основной кошелек
+
+walletSetAsDefault = ✅ Кошелек установлен как основной

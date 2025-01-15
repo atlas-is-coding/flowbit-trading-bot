@@ -5,9 +5,14 @@ import type { UserRepository } from "../repository/repository";
 export const walletsSettingsKeyboard = async (ctx: BotContext, userRepository: UserRepository) => {
     const wallets = await userRepository.getUserWallets(ctx.from!.id);
 
-    const walletButtons = wallets.map(wallet => ({
-        text: wallet.name || wallet.address.slice(0, 8) + '...',
-        callback_data: `wallet_settings_${wallet.address}`
+    // Дожидаемся выполнения всех промисов
+    const walletButtons = await Promise.all(wallets.map(async wallet => {
+        const isDefaultWallet = await userRepository.isDefaultWallet(ctx.from!.id, wallet.address);
+
+        return {
+            text: `${isDefaultWallet ? "🟢" : "🔴"} ` + (wallet.name || wallet.address.slice(0, 8) + '...'),
+            callback_data: `wallet_settings_${wallet.address}`
+        }
     }));
 
     // Группируем кнопки по 3 в строке
@@ -60,7 +65,10 @@ export const startTradingKeyboard = (ctx: BotContext) => {
 
 export const tradingMenuKeyboard = (ctx: BotContext) => {
     return new InlineKeyboard(
-        [
+        [   
+            [
+                { text: ctx.t("manualBuyer"), callback_data: "manual_buyer" },
+            ],
             [
                 { text: ctx.t("settings"), callback_data: "settings" },
                 { text: ctx.t("refresh"), callback_data: "refresh_trading_menu" },
@@ -112,9 +120,14 @@ export const closeKeyboard = (ctx: BotContext) => {
     )
 }
 
-export const walletPageKeyboard = (ctx: BotContext, walletAddress: string) => {
+export const walletPageKeyboard = async (ctx: BotContext, walletAddress: string, userRepository: UserRepository) => {
+    const isDefaultWallet = await userRepository.isDefaultWallet(ctx.from!.id, walletAddress);
+
     return new InlineKeyboard(
         [
+            [
+                {text: `${isDefaultWallet ? "🟢" : "🔴"} ` + ctx.t("defaultWallet"), callback_data: `set_default_wallet_${walletAddress}`}
+            ],
             [
                 { text: ctx.t("renameWallet"), callback_data: `rename_wallet_${walletAddress}` },
                 { text: ctx.t("deleteWallet"), callback_data: `del_wallet_${walletAddress}` },

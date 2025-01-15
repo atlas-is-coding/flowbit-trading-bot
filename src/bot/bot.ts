@@ -102,6 +102,7 @@ class TGBot {
     this.bot.callbackQuery(/^refresh_wallet_page_/, this.callbackManager.handleRefreshWalletPage.bind(this));
     
     this.bot.callbackQuery(/^rename_wallet_/, this.callbackManager.handleRenameWallet.bind(this));
+    this.bot.callbackQuery(/^set_default_wallet_/, this.callbackManager.handleSetDefaultWallet.bind(this));
     this.bot.callbackQuery(/^del_wallet_/, this.callbackManager.handleDeleteWalletConfirmation.bind(this));
     this.bot.callbackQuery(/^delete_wallet_yes_/, this.callbackManager.handleDeleteWalletConfirmationYes.bind(this));
     this.bot.callbackQuery("delete_wallet_no", this.callbackManager.handleDeleteWalletConfirmationNo.bind(this));

@@ -1,7 +1,7 @@
 import type { BotContext, MyConversation } from "../global";
-import { closeKeyboard, startTradingKeyboard } from "../keyboards/inline.keyboard";
+import { closeKeyboard, startTradingKeyboard, walletPageKeyboard } from "../keyboards/inline.keyboard";
 import { UserRepository } from "../repository/repository";
-import { createWalletFromPK } from "../utils/wallet.util";
+import { convertSolToUsd, createWalletFromPK, getBalanceByAddress } from "../utils/wallet.util";
 
 export class StateManager {
   private userRepository: UserRepository;
@@ -85,6 +85,27 @@ export class StateManager {
     await this.userRepository.updateWalletName(ctx.from!.id, ctx.session.selectedWallet!, newWalletName);
 
     await ctx.reply(ctx.t("walletRenamed", { walletName: newWalletName }));
+
+    const wallet = await this.userRepository.getWalletByAddress(ctx.from!.id, ctx.session.selectedWallet!);
+    
+    const balance = await getBalanceByAddress(ctx.session.selectedWallet!);
+    const usdBalance = await convertSolToUsd(balance);
+    
+    const isDefaultWallet = await this.userRepository.isDefaultWallet(ctx.from!.id, ctx.session.selectedWallet!);
+
+    await ctx.editMessageText(
+        ctx.t("walletPage", { 
+            walletName: wallet!.name, 
+            walletAddress: wallet!.address, 
+            balance: balance, 
+            usdBalance: usdBalance,
+            isDefaultWallet: isDefaultWallet ? "🟢" : "🔴",
+            lastUpdated: new Date().toLocaleTimeString() 
+        }), 
+        {
+            reply_markup: await walletPageKeyboard(ctx, ctx.session.selectedWallet!, this.userRepository)
+        }
+    );
 
     return;
   }

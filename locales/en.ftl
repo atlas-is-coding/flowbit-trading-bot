@@ -119,6 +119,8 @@ walletPage =
     → { $walletName }: <code>{ $walletAddress }</code>
     ˪💰 Balance: { $balance } SOL (~USD { $usdBalance })
 
+    { $isDefaultWallet } Default Wallet
+
     🕒 Last updated: { $lastUpdated }
 
 renameWallet = ✏️ Rename Wallet
@@ -142,3 +144,9 @@ ruLanguage = 🇷🇺 Russian
 enLanguage = 🇺🇸 English
 
 languageUpdated = 🌐 Language updated
+
+manualBuyer = 🛒 Manual Buyer
+
+defaultWallet = Default Wallet
+
+walletSetAsDefault = ✅ Wallet set as default
